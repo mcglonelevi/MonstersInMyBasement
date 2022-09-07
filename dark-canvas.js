@@ -6,6 +6,7 @@ class DarkCanvas extends HTMLCanvasElement {
       this.fillBlack = this.fillBlack.bind(this);
       this.clearRect = this.clearRect.bind(this);
       this.rerender = this.rerender.bind(this);
+      this.storeRect = this.storeRect.bind(this);
     }
 
     fillBlack() {
@@ -13,8 +14,11 @@ class DarkCanvas extends HTMLCanvasElement {
         this.drawingContext.clear(this.drawingContext.COLOR_BUFFER_BIT);
     }
 
-    clearRect(lowerLeft, width, height) {
+    storeRect(lowerLeft, width, height) {
         this.rects.push([lowerLeft, width, height]);
+    }
+
+    clearRect(lowerLeft, width, height) {
         // turn on scissor test
         this.drawingContext.enable(this.drawingContext.SCISSOR_TEST);
         // set the clear color
@@ -34,8 +38,8 @@ class DarkCanvas extends HTMLCanvasElement {
     rerender(additionalRects = [])
     {
         this.fillBlack();
-        this.rects.forEach(([pos1, pos2]) => this.clearRect(pos1, pos2));
-        additionalRects.forEach(([pos1, pos2]) => this.clearRect(pos1, pos2));
+        this.rects.forEach((rect) => this.clearRect(...rect));
+        additionalRects.forEach((rect) => this.clearRect(...rect));
     }
 }
 
