@@ -43,9 +43,10 @@ document.body.addEventListener('click', async () => {
 });
 
 function getCursorPosition(event) {
-  const rect = event.target.getBoundingClientRect()
+  const rect = event.target.getBoundingClientRect();
   const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
+  const y = Math.abs(event.clientY - rect.bottom);
+
   return [x, y];
 }
 
@@ -58,14 +59,18 @@ document.querySelector('#dark-canvas').addEventListener('click', (e) => {
   if (!pos1) {
     pos1 = position;
   } else {
+    const rectangle = new Rectangle(pos1, position);
+    console.log(rectangle);
     darkCanvas.clearRect(
-      [pos1[0], pos1[1]],
-      [position[0] - pos1[0], position[1] - pos1[1]]);
+      rectangle.lowerLeft,
+      rectangle.width,
+      rectangle.height);
     // darkCanvas.rerender();
     tab.postMessage({
       type: 'coords',
-      pos1,
-      pos2: position
+      lowerLeft: rectangle.lowerLeft,
+      width: rectangle.width,
+      height: rectangle.height,
     }, '*');
     pos1 = null;
   }
@@ -73,14 +78,20 @@ document.querySelector('#dark-canvas').addEventListener('click', (e) => {
 
 document.querySelector('#dark-canvas').addEventListener('mousemove', (e) => {
   e.stopPropagation();
-  console.log('hit');
-  const now = Date.now();
   const position = getCursorPosition(e);
-  if (pos1 && (!lastUpdated || lastUpdated < now - 100)) {
-    console.log('updated');
-    lastUpdated = now;
-    darkCanvas.rerender([
-      [pos1, [position[0] - pos1[0], position[1] - pos1[1]]]
-    ]);
-  }
+  console.log(position);
 });
+
+// document.querySelector('#dark-canvas').addEventListener('mousemove', (e) => {
+//   e.stopPropagation();
+//   console.log('hit');
+//   const now = Date.now();
+//   const position = getCursorPosition(e);
+//   if (pos1 && (!lastUpdated || lastUpdated < now - 100)) {
+//     console.log('updated');
+//     lastUpdated = now;
+//     darkCanvas.rerender([
+//       [pos1, [position[0] - pos1[0], position[1] - pos1[1]]]
+//     ]);
+//   }
+// });

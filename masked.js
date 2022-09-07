@@ -10,6 +10,6 @@ window.onmessage = async function (e) {
         darkCanvas.height = canvas.height;
         darkCanvas.fillBlack();
     } else if (e.data.type === 'coords') {
-        darkCanvas.clearRect(e.data.pos1, e.data.pos2);
+        darkCanvas.clearRect(e.data.lowerLeft, e.data.width, e.data.height);
     }
 }
